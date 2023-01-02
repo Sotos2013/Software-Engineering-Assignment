@@ -1,0 +1,181 @@
+<?php
+
+session_start();
+require_once '../../resources/config.php';
+
+//If the user already logged in, he gets redirected at the admin page.
+if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]=== true) {
+	header('Location: ../admin/');
+	die();
+}
+
+
+// Any errors that may occur during login
+$login_err = '';
+
+// Login code
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+	$username = $password = '';
+	$username_err = $password_err = $login_err = '';
+
+	// Get the username
+	if(empty(trim($_POST['username']))) {
+		$username_err = 'Εισάγετε όνομα χρήστη';
+	}
+	else {
+		$username = trim($_POST['username']);
+	}
+
+	// Get the password
+	if(empty(trim($_POST['password']))) {
+		$password_err = 'Εισάγετε κωδικό';
+	}
+	else {
+		$password = trim($_POST['password']);
+	}
+
+	if(empty($username_err) && empty($password_err)) {
+		$link = connectDB();
+		$sql = 'SELECT username, password FROM user WHERE username = :username';
+		
+		if($stmt = $link->prepare($sql)) {
+			// Bind and set the prepared statement
+			$stmt->bindParam(':username', $param_username, PDO::PARAM_STR);
+			
+			$param_username = $username;
+	if($username=="admin"){
+			if($stmt->execute()) {
+				if($stmt->rowCount() == 1) {
+					// Get the results
+					if($row = $stmt->fetch()) {
+						$username = $row["username"];
+						$hashed_password = $row["password"];
+						//Correct credentials
+						if(strcmp(hash('sha256', $password), $hashed_password) === 0) {
+							session_start();
+							$_SESSION['logged_in'] = true;
+							$_SESSION['user'] = $username;
+							header('Location: ../../');
+						}
+						else {
+							// Password is invalid, display a generic error message
+							$login_err = 'Λάθος στοιχεία';
+						}
+					}
+					else {
+						// Failed to fetch the results
+						$login_err = 'Απρόσμενο σφάλμα';
+					}
+				}
+				else {
+					// Username doesn't exist, display a generic error message
+					$login_err = 'Λάθος όνομα χρήστη ή κωδικός';
+				}
+			}
+			else {
+				// Failed to execute the prepared statement
+				$login_err = 'Σφάλμα';
+			}
+		}
+		else{
+			if($stmt->execute()) {
+				if($stmt->rowCount() == 1) {
+					// Get the results
+					if($row = $stmt->fetch()) {
+						$username = $row["username"];
+						$hashed_password = $row["password"];
+						//Correct credentials
+						if(strcmp(hash('sha256', $password), $hashed_password) === 0) {
+							session_start();
+							$_SESSION['logged_in'] = true;
+							$_SESSION['user'] = $username;
+							header('Location: ../user/');
+						}
+						else {
+							// Password is invalid, display a generic error message
+							$login_err = 'Λάθος στοιχεία';
+						}
+					}
+					else {
+						// Failed to fetch the results
+						$login_err = 'Απρόσμενο σφάλμα';
+					}
+				}
+				else {
+					// Username doesn't exist, display a generic error message
+					$login_err = 'Λάθος όνομα χρήστη ή κωδικός';
+				}
+			}
+			else {
+				// Failed to execute the prepared statement
+				$login_err = 'Σφάλμα';
+			}
+		}
+
+			unset($stmt);
+		}
+	}
+	unset($pdo);
+}
+
+?>
+
+<!doctype html>
+<html lang="el">
+	<head>
+		<!-- Website settings -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="ESAKE Loggin Page">
+		<title>Σύνδεση</title>
+
+		<!-- Bootstrap and other required CSS -->
+		<link rel="stylesheet" href="../css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="./css/login.css"/>
+	</head>
+
+	<body class="text-center">
+	
+	<main class="form-signin">
+
+		<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>">
+			<img class="mb-4" src=<?php echo AREF_DIR_IMG . 'brand/esake-logo.jpg'?> alt="esake-logo" height="120">
+			
+			<?php
+				if($_SERVER["REQUEST_METHOD"] == "GET") {
+					// Check if the user was redirected - "Login Required"
+					if(isset($_GET["lr"])) {
+						displayErrorBanner('Πρέπει να συνδεθείτε για να έχετε πρόσβαση στο σύστημα.', '');
+					}
+				
+					// Check if the user logged out - "Logged out"
+					if(isset($_GET["lo"])) {
+						displaySuccessBanner('Επιτυχής αποσύνδεση!', '');
+					}
+				}
+
+				if($login_err){
+					displayErrorBanner($login_err, '');
+				}
+			?>
+
+			<h1 class="h3 mb-3 fw-normal">Σύνδεση</h1>
+
+			<div class="form-floating">
+				<input type="text" class="form-control" id="username" name="username" placeholder="Username">
+				<label for="username">Όνομα χρήστη</label>
+			</div>
+
+			<div class="form-floating">
+				<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+				<label for="password">Κωδικός</label>
+			</div>
+
+			<button class="w-100 btn btn-lg btn-primary" type="submit">Σύνδεση</button><br>
+			<p>Νέος Χρήστης; Εγγραφείτε <a href="registration.php">εδώ</a>
+		</form>
+		<p class="mt-5 mb-3 text-muted">Μηχανική Λογισμικού, 7ο Εξάμηνο</br>&copy; Ομάδα 2, 2022-23</p>
+	</main>
+
+	</body>
+</html>
