@@ -14,6 +14,14 @@
 }
 </style>
 	<div class="container">
-		<span class="text">Μηχανική Λογισμικού, Σύστημα Διαχείρισης Στατιστικών Πρωταθλημάτων Μπάσκετ.</span><br><strong><?php echo 'Συνδεδεμένος χρήστης : ' . $_SESSION['username']; ?></strong>
+		<span class="text">Μηχανική Λογισμικού, Σύστημα Διαχείρισης Στατιστικών Πρωταθλημάτων Μπάσκετ.</span><br><strong>
+    <?php 
+    if(isset($_SESSION['user'])) {
+        echo 'Συνδεδεμένος χρήστης : ' . htmlspecialchars($_SESSION['user']); 
+    } else {
+        echo 'Μη συνδεδεμένος χρήστης';
+    }
+    ?>
+</strong>
 	</div>
 </footer>
