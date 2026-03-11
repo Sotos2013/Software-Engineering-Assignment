@@ -1,18 +1,17 @@
 <?php
-   
-    $servername = "localhost"; 
-    $username = "root"; 
-    $password = "";
-    $database = "basketball_db";
-   
-     // Create a connection 
-     $conn = mysqli_connect($servername, 
-         $username, $password, $database);
-   
-    if($conn) {
-        echo ""; 
-    } 
-    else {
-        die("Error". mysqli_connect_error()); 
-    } 
+    $host='localhost';
+    $db ='basketball_db';
+    require_once 'db_user_pass.php';
+    $user=$DB_USER;
+    $pass=$DB_PASS;
+    if(gethostname()=='users.iee.ihu.gr') {
+        $mysqli = new mysqli($host, $user, $pass, $db,null,'/home/student/iee/2019/iee2019187/mysql/run/mysql.sock');
+    } else {
+            $mysqli = new mysqli($host, $user, $pass, $db);
+    }
+
+    if ($mysqli->connect_errno) {
+        echo "Failed to connect to MySQL: (" . 
+        $mysqli->connect_errno . ") " . $mysqli->connect_error;
+    }
 ?>

@@ -40,15 +40,32 @@ define('AREF_ADMIN_SEARCH_TEAM', 	AREF_DIR_ADMIN . 'searchTeam.php');
 define('AREF_USER_SEARCH_PLAYERS', 	AREF_DIR_USER . 'searchPlayers.php');
 define('AREF_USER_SEARCH_TEAM', 	AREF_DIR_USER . 'searchTeam.php');
 function connectDB() {
-	try{
-		$db_lnk = new PDO('mysql:dbname=basketball_db;host=localhost', 'root', '');
-		$db_lnk->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	}
-	catch(PDOException $e){
-		die("ERROR: Could not connect. " . $e->getMessage());
-	}
+    $host = 'localhost';
+    $db   = 'basketball_db';
+    
+    // Φόρτωση των κωδικών (Βεβαιώσου ότι το αρχείο υπάρχει στην ίδια διαδρομή)
+    require_once 'db_user_pass.php'; 
+    $user = $DB_USER;
+    $pass = $DB_PASS;
 
-	return $db_lnk;
+    try {
+        // Έλεγχος αν τρέχουμε στον server του τμήματος
+        if(gethostname() == 'users.iee.ihu.gr') {
+            // Σύνδεση PDO μέσω του Unix Socket
+            $dsn = "mysql:host=$host;dbname=$db;charset=utf8;unix_socket=/home/student/iee/2019/iee2019187/mysql/run/mysql.sock";
+        } else {
+            // Κλασική σύνδεση για το localhost (XAMPP/WAMP)
+            $dsn = "mysql:host=$host;dbname=$db;charset=utf8";
+        }
+
+        $db_lnk = new PDO($dsn, $user, $pass);
+        $db_lnk->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        return $db_lnk;
+        
+    } catch(PDOException $e) {
+        die("Σφάλμα σύνδεσης: " . $e->getMessage());
+    }
 }
 function displayErrorBanner(string $text, string $title = 'Σφάλμα!') {
 	echo '<div class="alert alert-danger fade show" role="alert">';
