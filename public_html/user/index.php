@@ -5,9 +5,9 @@ require_once '../../resources/config.php';
 $currPage = 'userDashboard';
 
 // Ενοποίηση του ελέγχου session (χρήση 'logged_in')
-if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header('Location: ' . AREF_LOGIN . '?lr'); // Ανακατεύθυνση στο login αν δεν είναι συνδεδεμένος
-    die();
+if(!isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true) {
+    header('Location: ' . AREF_LOGIN . '?lr');
+    exit;
 }
 
 $imageURL= "../img/brand/basketball-wallpaper.jpg";
