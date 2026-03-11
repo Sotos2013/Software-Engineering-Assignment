@@ -41,20 +41,21 @@ define('AREF_USER_SEARCH_PLAYERS', 	AREF_DIR_USER . 'searchPlayers.php');
 define('AREF_USER_SEARCH_TEAM', 	AREF_DIR_USER . 'searchTeam.php');
 function connectDB() {
     $host = 'localhost';
-    $db   = 'basketball_db';
     
-    // Φόρτωση των κωδικών (Βεβαιώσου ότι το αρχείο υπάρχει στην ίδια διαδρομή)
-    require_once 'db_user_pass.php'; 
+    // ΣΤΟΝ SERVER ΤΟΥ ΤΜΗΜΑΤΟΣ: Το όνομα της βάσης είναι συνήθως το username σου
+    $db = (gethostname() == 'users.iee.ihu.gr') ? 'iee2019187' : 'basketball_db';
+    
+    // 1. Χρήση ΑΠΟΛΥΤΗΣ ΔΙΑΔΡΟΜΗΣ για να το βρίσκει από παντού
+    require_once '/home/student/iee/2019/iee2019187/resources/db_user_pass.php'; 
+    
     $user = $DB_USER;
     $pass = $DB_PASS;
 
     try {
-        // Έλεγχος αν τρέχουμε στον server του τμήματος
         if(gethostname() == 'users.iee.ihu.gr') {
-            // Σύνδεση PDO μέσω του Unix Socket
+            // 2. Σύνδεση μέσω Unix Socket (Απαραίτητο για users.iee.ihu.gr)
             $dsn = "mysql:host=$host;dbname=$db;charset=utf8;unix_socket=/home/student/iee/2019/iee2019187/mysql/run/mysql.sock";
         } else {
-            // Κλασική σύνδεση για το localhost (XAMPP/WAMP)
             $dsn = "mysql:host=$host;dbname=$db;charset=utf8";
         }
 
@@ -64,7 +65,8 @@ function connectDB() {
         return $db_lnk;
         
     } catch(PDOException $e) {
-        die("Σφάλμα σύνδεσης: " . $e->getMessage());
+        // Κατά το development, εμφάνισε το πλήρες σφάλμα για να ξέρεις τι φταίει
+        die("Σφάλμα σύνδεσης στη βάση: " . $e->getMessage());
     }
 }
 function displayErrorBanner(string $text, string $title = 'Σφάλμα!') {
