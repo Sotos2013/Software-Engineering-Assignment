@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../../resources/config.php';
-$currPage = 'searchplayers';
+$currPage = 'searchPlayers';
 
 // 1. Έλεγχος πρόσβασης (Χρήση 'logged_in' για συνέπεια)
 if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
