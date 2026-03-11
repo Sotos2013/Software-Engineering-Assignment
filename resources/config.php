@@ -46,7 +46,8 @@ function connectDB() {
     $db = (gethostname() == 'users.iee.ihu.gr') ? 'iee2019187' : 'basketball_db';
     
     // 1. Χρήση ΑΠΟΛΥΤΗΣ ΔΙΑΔΡΟΜΗΣ για να το βρίσκει από παντού
-    require_once '/home/student/iee/2019/iee2019187/resources/db_user_pass.php'; 
+    // Αντικατάστησε το require_once 'db_user_pass.php'; με αυτό:
+	require_once '/home/student/iee/2019/iee2019187/public_html/Software-Engineering-Assignment/public_html/login/db_user_pass.php';
     
     $user = $DB_USER;
     $pass = $DB_PASS;
