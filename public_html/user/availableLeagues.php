@@ -3,8 +3,7 @@ session_start();
 require_once '../../resources/config.php';
 $currPage = 'availableLeagues';
 // 1. Έλεγχος πρόσβασης (Χρήση 'logged_in' για συνέπεια)
-if ( (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) && 
-     (!isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true) ) {
+if ( !isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true ) {
     header('Location: ' . AREF_LOGIN . '?lr');
     exit;
 }
