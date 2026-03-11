@@ -43,7 +43,7 @@ function connectDB() {
     $host = 'localhost';
     
     // ΣΤΟΝ SERVER ΤΟΥ ΤΜΗΜΑΤΟΣ: Το όνομα της βάσης είναι συνήθως το username σου
-    $db = (gethostname() == 'users.iee.ihu.gr') ? 'iee2019187' : 'basketball_db';
+    $db = 'basketball_db';
     
     // 1. Χρήση ΑΠΟΛΥΤΗΣ ΔΙΑΔΡΟΜΗΣ για να το βρίσκει από παντού
     // Αντικατάστησε το require_once 'db_user_pass.php'; με αυτό:
