@@ -1,126 +1,67 @@
 <?php
-
 session_start();
 require_once '../../resources/config.php';
 
-//If the user already logged in, he gets redirected at the admin page.
-if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"]=== true) {
-	header('Location: ../admin/');
-	die();
+// Ανακατεύθυνση αν είναι ήδη συνδεδεμένος
+if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] === true) {
+    header('Location: ../admin/');
+    die();
 }
-if(isset($_SESSION["log_in"]) && $_SESSION["log_in"]=== true) {
-	header('Location: ../user/');
-	die();
+if(isset($_SESSION["log_in"]) && $_SESSION["log_in"] === true) {
+    header('Location: ../user/');
+    die();
 }
 
-
-// Any errors that may occur during login
 $login_err = '';
 
-// Login code
 if($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username = $password = '';
-	$username_err = $password_err = $login_err = '';
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-	// Get the username
-	if(empty(trim($_POST['username']))) {
-		$username_err = 'Εισάγετε όνομα χρήστη';
-	}
-	else {
-		$username = trim($_POST['username']);
-	}
-
-	// Get the password
-	if(empty(trim($_POST['password']))) {
-		$password_err = 'Εισάγετε κωδικό';
-	}
-	else {
-		$password = trim($_POST['password']);
-	}
-
-	if(empty($username_err) && empty($password_err)) {
-		$link = connectDB();
-		$sql = 'SELECT username, password FROM user WHERE username = :username';
-		
-		if($stmt = $link->prepare($sql)) {
-			// Bind and set the prepared statement
-			$stmt->bindParam(':username', $param_username, PDO::PARAM_STR);
-			
-			$param_username = $username;
-	if($username=="admin"){
-			if($stmt->execute()) {
-				if($stmt->rowCount() == 1) {
-					// Get the results
-					if($row = $stmt->fetch()) {
-						$username = $row["username"];
-						$hashed_password = $row["password"];
-						//Correct credentials
-						if(strcmp(hash('sha256', $password), $hashed_password) === 0) {
-							session_start();
-							$_SESSION['logged_in'] = true;
-							$_SESSION['user'] = $username;
-							header('Location: ../../');
-						}
-						else {
-							// Password is invalid, display a generic error message
-							$login_err = 'Λάθος στοιχεία';
-						}
-					}
-					else {
-						// Failed to fetch the results
-						$login_err = 'Απρόσμενο σφάλμα';
-					}
-				}
-				else {
-					// Username doesn't exist, display a generic error message
-					$login_err = 'Λάθος όνομα χρήστη ή κωδικός';
-				}
-			}
-			else {
-				// Failed to execute the prepared statement
-				$login_err = 'Σφάλμα';
-			}
-		}
-		else{
-			if($stmt->execute()) {
-				if($stmt->rowCount() == 1) {
-					// Get the results
-					if($row = $stmt->fetch()) {
-						$username = $row["username"];
-						$hashed_password = $row["password"];
-						//Correct credentials
-						if(strcmp(hash('sha256', $password), $hashed_password) === 0) {
-							session_start();
-							$_SESSION['log_in'] = true;
-							$_SESSION['user'] = $username;
-							header('Location: ../user/');
-						}
-						else {
-							// Password is invalid, display a generic error message
-							$login_err = 'Λάθος στοιχεία';
-						}
-					}
-					else {
-						// Failed to fetch the results
-						$login_err = 'Απρόσμενο σφάλμα';
-					}
-				}
-				else {
-					// Username doesn't exist, display a generic error message
-					$login_err = 'Λάθος όνομα χρήστη ή κωδικός';
-				}
-			}
-			else {
-				// Failed to execute the prepared statement
-				$login_err = 'Σφάλμα';
-			}
-		}
-			unset($stmt);
-		}
-	}
-	unset($pdo);
+    if(empty($username) || empty($password)) {
+        $login_err = 'Συμπληρώστε όλα τα πεδία.';
+    } else {
+        $link = connectDB();
+        // Επιλέγουμε τον χρήστη
+        $sql = 'SELECT username, password FROM user WHERE username = :username';
+        
+        if($stmt = $link->prepare($sql)) {
+            $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+            
+            if($stmt->execute()) {
+                if($stmt->rowCount() == 1) {
+                    if($row = $stmt->fetch()) {
+                        $db_username = $row["username"];
+                        $hashed_password = $row["password"];
+                        
+                        // Έλεγχος κωδικού (SHA-256)
+                        if(hash('sha256', $password) === $hashed_password) {
+                            // Καθορισμός ρόλου
+                            if($db_username === "admin") {
+                                $_SESSION['logged_in'] = true;
+                                $_SESSION['user'] = $db_username;
+                                header('Location: ../admin/');
+                            } else {
+                                $_SESSION['log_in'] = true;
+                                $_SESSION['user'] = $db_username;
+                                header('Location: ../user/');
+                            }
+                            die();
+                        } else {
+                            $login_err = 'Λάθος όνομα χρήστη ή κωδικός.';
+                        }
+                    }
+                } else {
+                    $login_err = 'Λάθος όνομα χρήστη ή κωδικός.';
+                }
+            } else {
+                $login_err = 'Σφάλμα συστήματος. Δοκιμάστε αργότερα.';
+            }
+            unset($stmt);
+        }
+    }
+    unset($link);
 }
-
 ?>
 
 <!doctype html>
