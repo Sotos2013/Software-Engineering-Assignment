@@ -1,10 +1,11 @@
 <?php
 session_start();
+// Αρχικοποίηση όλων των μεταβλητών ειδοποίησης
+$showAlert = false;
+$showError = false; // Εδώ έλειπε ή δεν έπαιρνε τιμή
+$exists = false;
 // Χρησιμοποιούμε το config που ήδη έχουμε διορθώσει
 require_once '../../resources/config.php';
-
-$showAlert = false;
-$exists = false;
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $link = connectDB(); // Καλούμε τη συνάρτηση που φτιάξαμε στο config.php
