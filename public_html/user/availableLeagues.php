@@ -55,26 +55,27 @@ $imageURL= "../img/brand/basketball-wallpaper.jpg";
 				<?php
 					try {
 						$dbh = connectDB();
-
 						$sql = 'SELECT * FROM championship';
 
-						$data = $dbh->query($sql)->fetchAll();
+						// 2. Χρήση PDO::FETCH_ASSOC για να πάρουμε πίσω ένα συνηθισμένο πίνακα
+						$data = $dbh->query($sql)->fetchAll(PDO::FETCH_ASSOC); 
 						
 						$i = 1;
 						foreach($data as $row) {
-				?>
-					<tr>
-						<th>
-							<h4 class="pt-2"><?= $i++ ?></h4>
-						</th>
-						<td>
-							<h4 class="pt-2"><?= $row['name'] ?></h4>
-						</td>
-						<td>
-							<a href="<?= AREF_USER_DISPLAY_LEAGUE ?>?cid=<?= $row['id'] ?>" class="btn btn-success btn-enlarge me-2 mt-1 mb-1" role="button">Προβολή</a>
-							<a href="<?= AREF_USER_DELETE_LEAGUE ?>?cid=<?= $row['id'] ?>" class="btn btn-danger btn-enlarge me-2 mt-1 mb-1" role="button">Διαγραφή</a>
-						</td>
-					</tr>
+					?>
+						<tr>
+							<th><h4 class="pt-2"><?= $i++ ?></h4></th>
+							<td><h4 class="pt-2"><?= htmlspecialchars($row['name']) ?></h4></td>
+							<td>
+								<a href="<?= AREF_USER_DISPLAY_LEAGUE ?>?cid=<?= $row['id'] ?>" class="btn btn-success">Προβολή</a>
+							</td>
+						</tr>
+					<?php
+						} 
+					} catch(PDOException $ex) {
+						echo 'Σφάλμα: ' . $ex->getMessage();
+					}
+					?>
 				<?php
 						}
 					}
