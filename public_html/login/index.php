@@ -39,13 +39,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                         // Έλεγχος κωδικού (SHA-256)
                         if(hash('sha256', $password) === $hashed_password) {
                             // Καθορισμός ρόλου
+                            // Μέσα στο login/index.php
                             if($db_username === "admin") {
                                 $_SESSION['logged_in'] = true;
-                                $_SESSION['user'] = $db_username;
+                                $_SESSION['username'] = $db_username; // Άλλαξε το 'user' σε 'username'
                                 header('Location: ../admin/');
                             } else {
                                 $_SESSION['log_in'] = true;
-                                $_SESSION['user'] = $db_username;
+                                $_SESSION['username'] = $db_username; // Άλλαξε το 'user' σε 'username'
                                 header('Location: ../user/');
                             }
                             die();
