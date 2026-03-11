@@ -1,63 +1,40 @@
 <?php
+session_start();
+// Χρησιμοποιούμε το config που ήδη έχουμε διορθώσει
+require_once '../../resources/config.php';
+
 $showAlert = false;
-$showError = false;
-$showErrorNC = false;
-$exists=false;
-if(isset($_SESSION["log_in"]) && $_SESSION["log_in"] === true) {
-	header('Location: ../user/');
-	die();
-}
+$exists = false;
+
 if($_SERVER["REQUEST_METHOD"] == "POST") {
-	
-	// Include file which makes the
-	// Database Connection.
-	include 'dbconnect.php';
-	
-	$username = $_POST["username"];
-	$password = $_POST["password"];
-	$hash = hash('sha256',$password);
-	if($username!=null && $hash!="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"){		
-		$sql = "Select * from user where username='$username'";
-		
-		$result = mysqli_query($conn, $sql);
-		
-		$num = mysqli_num_rows($result);
-		
-		// This sql query is use to check if
-		// the username is already present
-		// or not in our Database
-		if($num == 0) {
-			if($exists==false) {
-				// Password Hashing is used here.
-				$sql = "INSERT INTO `user` ( `username`,
-					`password`, `create_time`) VALUES ('$username',
-					'$hash', current_timestamp())";
-		
-				$result = mysqli_query($conn, $sql);
-				if ($result) {
-					$showAlert = true;
-				}
-			}	
-		}
-		if($num>0){
-			$exists="Username not available";
-		}
-	}
-	else{
-		$wrong = "DELETE FROM `user` WHERE `user`.`username` = '$username'";
-  
-    if ($conn->query($wrong) === TRUE) {
-          $showError=true;
-    } else {
-          echo $conn->error;
+    $link = connectDB(); // Καλούμε τη συνάρτηση που φτιάξαμε στο config.php
+    
+    $username = trim($_POST["username"]);
+    $password = $_POST["password"];
+    $hash = hash('sha256', $password);
+
+    if(!empty($username) && !empty($password)) {
+        // Έλεγχος αν υπάρχει ήδη ο χρήστης (PDO style)
+        $sql = "SELECT * FROM user WHERE username = :username";
+        $stmt = $link->prepare($sql);
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->execute();
+        
+        if($stmt->rowCount() > 0) {
+            $exists = "Το όνομα χρήστη χρησιμοποιείται ήδη.";
+        } else {
+            // Εισαγωγή νέου χρήστη
+            $insert_sql = "INSERT INTO user (username, password, create_time) VALUES (:username, :password, current_timestamp())";
+            $insert_stmt = $link->prepare($insert_sql);
+            $insert_stmt->bindParam(':username', $username, PDO::PARAM_STR);
+            $insert_stmt->bindParam(':password', $hash, PDO::PARAM_STR);
+            
+            if($insert_stmt->execute()) {
+                $showAlert = true;
+            }
+        }
     }
-  
-    $conn->close();
-	}
-	// end if
-	
-}//end if
-	
+}
 ?>
 	
 <!doctype html>
