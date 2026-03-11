@@ -1,21 +1,18 @@
 <?php
 session_start();
-
-// Προσοχή στο διπλό public_html αν αυτή είναι η δομή σου
-$base_url = "https://users.iee.ihu.gr/~iee2019187/Software-Engineering-Assignment/public_html/";
+require_once './resources/config.php';
 
 if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] === true) {
-    header('Location: ' . $base_url . 'admin/index.php');
+    header('Location: ./admin/');
     exit;
 } 
 elseif(isset($_SESSION["log_in"]) && $_SESSION["log_in"] === true) {
-    header('Location: ' . $base_url . 'user/index.php');
+    header('Location: ./user/');
     exit;
 }
 else {
-    // Αν το αρχείο αυτό βρίσκεται ήδη μέσα στο /public_html/, 
-    // τότε το redirect πρέπει να δείχνει στον υποφάκελο login/
-    header('Location: ./login/index.php'); 
+    // Χρησιμοποιούμε την απόλυτη διαδρομή URL για τον server
+    header('Location: /~iee2019187/Software-Engineering-Assignment/public_html/login/index.php');
     exit;
 }
 ?>
