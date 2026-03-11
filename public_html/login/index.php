@@ -2,14 +2,16 @@
 session_start();
 require_once '../../resources/config.php';
 
-// Ανακατεύθυνση αν είναι ήδη συνδεδεμένος
+// 1. ΑΝ ΕΙΝΑΙ ΗΔΗ ΣΥΝΔΕΔΕΜΕΝΟΣ (Admin), πήγαινέ τον στο Admin Dashboard
 if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] === true) {
     header('Location: ../admin/');
-    die();
+    exit;
 }
+
+// 2. ΑΝ ΕΙΝΑΙ ΗΔΗ ΣΥΝΔΕΔΕΜΕΝΟΣ (User), πήγαινέ τον στο User Dashboard
 if(isset($_SESSION["log_in"]) && $_SESSION["log_in"] === true) {
     header('Location: ../user/');
-    die();
+    exit;
 }
 
 $login_err = '';
