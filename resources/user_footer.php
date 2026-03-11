@@ -16,8 +16,8 @@
 	<div class="container">
 		<span class="text">Μηχανική Λογισμικού, Σύστημα Διαχείρισης Στατιστικών Πρωταθλημάτων Μπάσκετ.</span><br><strong>
     <?php 
-    if(isset($_SESSION['user'])) {
-        echo 'Συνδεδεμένος χρήστης : ' . htmlspecialchars($_SESSION['user']); 
+    if(isset($_SESSION['username'])) {
+        echo 'Συνδεδεμένος χρήστης : ' . htmlspecialchars($_SESSION['username']); 
     } else {
         echo 'Μη συνδεδεμένος χρήστης';
     }
