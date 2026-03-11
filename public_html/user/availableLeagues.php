@@ -2,9 +2,11 @@
 session_start();
 require_once '../../resources/config.php';
 $currPage = 'availableLeagues';
-if(!isset($_SESSION['log_in']) || !$_SESSION['log_in'] === true) {
-	header('Location: ' . AREF_DIR_USER . '/?availableLeagues.php');
-	die();
+// 1. Έλεγχος πρόσβασης (Χρήση 'logged_in' για συνέπεια)
+if ( (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) && 
+     (!isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true) ) {
+    header('Location: ' . AREF_LOGIN . '?lr');
+    exit;
 }
 $imageURL= "../img/brand/basketball-wallpaper.jpg";
 ?>

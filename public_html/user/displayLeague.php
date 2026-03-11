@@ -4,10 +4,11 @@ require_once '../../resources/config.php';
 
 $currPage = 'displayLeague';
 
-// 1. Έλεγχος αν ο χρήστης είναι συνδεδεμένος (Χρήση 'logged_in' για ομοιομορφία)
-if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+// 1. Έλεγχος πρόσβασης (Χρήση 'logged_in' για συνέπεια)
+if ( (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) && 
+     (!isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true) ) {
     header('Location: ' . AREF_LOGIN . '?lr');
-    die();
+    exit;
 }
 
 $err_msg = '';

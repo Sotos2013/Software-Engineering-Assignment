@@ -3,10 +3,11 @@ session_start();
 require_once '../../resources/config.php';
 $currPage = 'searchTeam';
 
-// 1. Έλεγχος πρόσβασης (Συγχρονισμός με το 'logged_in' που χρησιμοποιούμε παντού)
-if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header('Location: '. AREF_LOGIN .'?lr');
-    die();
+// 1. Έλεγχος πρόσβασης (Χρήση 'logged_in' για συνέπεια)
+if ( (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) && 
+     (!isset($_SESSION['log_in']) || $_SESSION['log_in'] !== true) ) {
+    header('Location: ' . AREF_LOGIN . '?lr');
+    exit;
 }
 
 // 2. Σύνδεση με τη βάση μέσω της κεντρικής συνάρτησης
