@@ -18,7 +18,7 @@ if(isset($_GET['username'])) {
     
     // ΠΡΟΣΟΧΗ: Έλεγχος αν ο χρήστης διαγράφει τον ΕΑΥΤΟ ΤΟΥ 
     // (ή αν είσαι admin και διαγράφεις κάποιον άλλον)
-    if($_SESSION['username'] == $delUser) {
+    if(isset($_SESSION['username']) && $_SESSION['username'] == $delUser){
         try {
             // 3. Χρήση Prepared Statement για απόλυτη ασφάλεια
             $stmt = $conn->prepare("DELETE FROM user WHERE username = :uname");
