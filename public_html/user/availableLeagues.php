@@ -76,14 +76,6 @@ $imageURL= "../img/brand/basketball-wallpaper.jpg";
 						echo 'Σφάλμα: ' . $ex->getMessage();
 					}
 					?>
-				<?php
-						}
-					}
-					catch(PDOException $ex) {
-						echo 'Failed to fetch the championships. Reason: ' . $ex->getMessage();
-					}
-					
-				?>
 				</tbody>
 			</table>
 			
